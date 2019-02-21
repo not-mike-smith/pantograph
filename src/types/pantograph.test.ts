@@ -37,8 +37,6 @@ const condense = <T>(expandedObj: p.Expanded<T>): T => {
     ) as T;
 };
 
-// Do these next!
-
 const required = <T>(
     parse: (textValue: string) => null | T,
     unparse: (value: T) => string,
@@ -49,6 +47,20 @@ const required = <T>(
         textValue: initialValue === null ? null : unparse(initialValue),
         parse,
         isRequired: true,
+        _isExpandedVariable: true
+    };
+};
+
+const optional = <T>(
+    parse: (textValue: string) => null | T,
+    unparse: (value: T) => string,
+    initialValue: null | T = null,
+): p.OptionalVariable<T> => {
+    return {
+        value: initialValue,
+        textValue: initialValue === null ? null : unparse(initialValue),
+        parse,
+        isRequired: false,
         _isExpandedVariable: true
     };
 };
@@ -73,13 +85,9 @@ const expandOptional = <T>(
 
 const passThrough = (s: string) => s;
 
-const requiredString = (initialValue: null | string = null): p.RequiredVariable<string> => {
-    return required(passThrough, passThrough, initialValue);
-};
+const requiredString = expandRequired<string>(passThrough, passThrough);
 
-const optionalString = (initialValue: null | string = null): p.OptionalVariable<string> => {
-    return optional(passThrough, passThrough, initialValue);
-};
+const optionalString = expandOptional<string>(passThrough, passThrough);
 
 const parseIntOrNull = (s: string): null | number => {
     const i = parseInt(s);
@@ -88,20 +96,9 @@ const parseIntOrNull = (s: string): null | number => {
     return i;
 };
 
-const requiredInt = (initialValue: null | number = null): p.RequiredVariable<number> => {
-    return required(
-        parseIntOrNull,
-        (int: number) => int.toString(),
-        initialValue
-    );
-};
+const requiredInt = expandRequired<number>(parseIntOrNull, int => int.toString());
 
-const optionalInt = (initialValue: null | number = null): p.OptionalVariable<number> => {
-    return optional(
-        parseIntOrNull,
-        (int: number) => int.toString(),
-        initialValue);
-};
+const optionalInt = expandOptional<number>(parseIntOrNull, int => int.toString());
 
 const parseFloatOrNull = (s: string): null | number => {
     const f = parseFloat(s);
@@ -110,21 +107,9 @@ const parseFloatOrNull = (s: string): null | number => {
     return f;
 };
 
-const requiredFloat = (initalValue: null | number = null) => {
-    return required(
-        parseFloatOrNull,
-        f => f.toString(),
-        initalValue
-    );
-};
+const requiredFloat = expandRequired<number>(parseFloatOrNull, f => f.toString());
 
-const optionalFloat = (initialValue: null | number = null) => {
-    return optional(
-        parseFloatOrNull,
-        f => f.toString(),
-        initialValue
-    );
-};
+const optionalFloat = expandOptional<number>(parseFloatOrNull, f => f.toString());
 
 const parseYesNo = (yesNo: string): null | boolean => {
     const yn = yesNo.toLowerCase();
@@ -136,33 +121,7 @@ const parseYesNo = (yesNo: string): null | boolean => {
 
 const unparseYesNo = (b: boolean) => b ? "Yes" : "No";
 
-const requiredYesNo = (initialValue: null | boolean = null): p.RequiredVariable<boolean> => {
-    return required(
-        parseYesNo,
-        unparseYesNo,
-        initialValue
-    );
-};
+const requiredYesNo = expandRequired<boolean>(parseYesNo, unparseYesNo);
 
-const optionalYesNo = (initialValue: null | boolean = null): p.OptionalVariable<boolean> => {
-    return optional(
-        parseYesNo,
-        unparseYesNo,
-        initialValue
-    );
-};
-
-const optional = <T>(
-    parse: (textValue: string) => null | T,
-    unparse: (value: T) => string,
-    initialValue: null | T = null,
-): p.OptionalVariable<T> => {
-    return {
-        value: initialValue,
-        textValue: initialValue === null ? null : unparse(initialValue),
-        parse,
-        isRequired: false,
-        _isExpandedVariable: true
-    };
-};
+const optionalYesNo = expandOptional<boolean>(parseYesNo, unparseYesNo);
 
