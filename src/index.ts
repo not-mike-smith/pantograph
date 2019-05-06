@@ -1,5 +1,5 @@
 
-export interface IExpandedVariable {
+interface IExpandedVariable {
 	readonly value: any;
 	readonly textValue: null | string;
 	readonly parse: (textValue: string) => any;
@@ -113,11 +113,11 @@ export const expandOptional = <T>(
 	};
 };
 
-const passThrough = (s: string) => s;
+const stringIdentity = (s: string) => s;
 
-export const requiredString = expandRequired<string>(passThrough, passThrough);
+export const requiredString = expandRequired<string>(stringIdentity, stringIdentity);
 
-export const optionalString = expandOptional<string>(passThrough, passThrough);
+export const optionalString = expandOptional<string>(stringIdentity, stringIdentity);
 
 const parseIntOrNull = (s: string): null | number => {
 	const i = parseInt(s);
